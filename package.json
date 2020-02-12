@@ -1,0 +1,20 @@
+{
+  "name": "pw-app",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "test": "src/test"
+  },
+  "scripts": {
+    "test": "mocha --reporter list --timeout 15000 'src/test/**/*.spec.js'",
+    "test-dev": "mocha  --inline-diffs --reporter list --timeout 15000 'src/test/**/*.spec.js'"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chai": "^4.2.0",
+    "mocha": "^7.0.1",
+    "playwright": "^0.10.0"
+  }
+}
