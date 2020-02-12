@@ -1,33 +1,42 @@
 const playwright = require('playwright');
 const chai = require('chai');
+const utils = require('../utils');
 const expect = chai.expect;
 const BASE_URL = 'https://sap.com';
-
-// playwright variables
-let page, browser, context
-let getStyles = async function(selector, page) {
-	return await page.$eval(selector, (el) => {
-  	const computedStyle  = window.getComputedStyle(el);
-  	return [...computedStyle].reduce( (elementStyles, property) => ({...elementStyles, [property]: computedStyle.getPropertyValue(property)}), {} )
-  });
+const SELECTORS = {
+    root: '.navigation-icon-bar-standard',
+    navitem: '.navigation-icon-bar-standard .navbar-item-icon-link',
+    navBarTitle: '.navigation-icon-bar-standard .navbar-item-title' 
 };
 
-describe('SAP 1DX TESTS - PILOT PROJECT', () => {
+// playwright variables
+let page, browser, context, getStyles;
 
-    beforeEach(async () => {
-        browser = await playwright['chromium'].launch({ headless: true })
-        context = await browser.newContext()
+describe('SAP 1DX TESTS - Navigation Icon Bar Standard', () => {
+    before(async () => {
+        browser = await playwright['chromium'].launch({ headless: true });
+        context = await browser.newContext();
         page = await context.newPage(BASE_URL);
     })
 
-    afterEach(async function() {
+    after(async function() {
         await browser.close()
     })
 
-    it('Check Navigation Icon Bar Height', async() => {
-    	await page.waitForSelector('.navigationIconBarStandard');
-        let styles = await  getStyles(".navigationIconBarStandard", page);
-        expect(styles.height).to.be.equal('286px');
+    it('Check Navigation Icon Bar main container', async() => {
+        let styles = await utils.getComputedStyles(SELECTORS.root, page);
+        expect(styles["background-color"]).to.be.equal('rgb(34, 34, 34)');
+        expect(styles["padding-top"]).to.be.equal('65px');
+        expect(styles["padding-bottom"]).to.be.equal('65px');
     })
-   
+    it('Check Navigation Icon Bar Nav Item', async() => {
+        let styles = await utils.getComputedStyles(SELECTORS.navitem, page);
+        expect(styles["padding-top"]).to.be.equal('5px');
+        expect(styles["font-size"]).to.be.equal('16px');
+        expect(styles["font-family"]).to.be.equal('SAPRegular, Arial, Helvetica, sans-serif');
+    })
+    it('Check Navigation Icon Bar Icon Title', async() => {
+        let styles = await utils.getComputedStyles(SELECTORS.navBarTitle, page);
+        expect(styles["color"]).to.be.equal('rgb(255, 255, 255)');
+    })
 })
